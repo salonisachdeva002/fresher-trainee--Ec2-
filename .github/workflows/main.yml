@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 jobs:
   terraform:
-    name: terraform
+    name: main
     runs-on: ubuntu-latest
     # environment: production
 
@@ -40,7 +40,7 @@ jobs:
 
 # Initialize command in terraform
      - name: Terraform Init
-        run : |
+       run : |
           cd example
           Terraform init
       # - name: Terraform Init
@@ -61,4 +61,4 @@ jobs:
           Terraform plan
     # - name: Terraform Apply
     #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
+        run: terraform apply -auto-approve
