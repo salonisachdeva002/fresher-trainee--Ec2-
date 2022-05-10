@@ -40,7 +40,7 @@ jobs:
 
 # Initialize command in terraform
       - name: Terraform Init
-         run : |
+        run : |
           cd example
           Terraform init
       # - name: Terraform Init
