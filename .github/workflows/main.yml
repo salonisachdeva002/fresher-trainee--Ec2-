@@ -1,66 +1,119 @@
-name: terraform apply
+# name: terraform
 
-on:
-  workflow_dispatch:
-jobs:
-  terraform:
-    name: terraform
-    runs-on: ubuntu-latest
+# on:
+#   workflow_dispatch:
+# jobs:
+#   terraform:
+#     name: terraform
+#     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
+#     defaults:
+#       run:
+#         shell: bash
 
-      steps:
-# checkout the repositry to the github action runner
-      - name: checkout
-        uses: actions/checkout@v2
+#       steps:
+# # checkout the repositry to the github action runner
+#       - name: checkout
+#         uses: actions/checkout@v2
 
-# install the latest version of terraform CLI and configure the terraform CLI configure file with terraform Cloud user API token
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+# # install the latest version of terraform CLI and configure the terraform CLI configure file with terraform Cloud user API token
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v2
+#         with:
+#           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-#checks the format canonical format
+# #checks the format canonical format
 #- name: Terraform Format
 # run: terraform fmt -check
 #configure aws_credentials
 
-      - name: configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+#       - name: configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
 
-# if you have/need it     
-          aws-region: us-east-1
+# # if you have/need it     
+#           aws-region: us-east-1
 
-# Initialize command in terraform
-      - name: terraform init
-        run : |
-          cd example
-          terraform init -reconfigure -backend-config="bucket=$BUCKET"-backend-config="key=$TFSTATE_FILE"
-      # - name: Terraform Init
-    #   run : terraform init
-      # - name: terraform validate
-      #   run: |
-      #     cd example
-      #     terraform validate -no-color
+# # Initialize command in terraform
+#       - name: terraform init
+#         run : |
+#           cd example
+#           terraform init -reconfigure -backend-config="bucket=$BUCKET"-backend-config="key=$TFSTATE_FILE"
+#       # - name: Terraform Init
+#     #   run : terraform init
+#       # - name: terraform validate
+#       #   run: |
+#       #     cd example
+#       #     terraform validate -no-color
 
-      - name: terraform plan
-        run : |
-          cd example
-          terraform plan 
-    # - name: Terraform Plan
-    #   run: terraform plan
+#       - name: terraform plan
+#         run : |
+#           cd example
+#           terraform plan 
+#     # - name: Terraform Plan
+#     #   run: terraform plan
 
-#Generate an execution apply for terraform 
-      - name: terraform apply
-        run : |
-          cd example
-          terraform apply -auto-approve
-    # - name: Terraform Apply
-    #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        #  terraform apply -auto-approve
+# #Generate an execution apply for terraform 
+#       - name: terraform apply
+#         run : |
+#           cd example
+#           terraform apply -auto-approve
+#     # - name: Terraform Apply
+#     #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#         #  terraform apply -auto-approve
+
+name: terraform 
+
+on:
+  workflow_dispatch:
+
+env:
+  BUCKET: backend-demo1
+  TFSTATE_FILE: salonis.tfstate 
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+
+    steps:
+    
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ap-northeast-1
+    - name: terraform init
+      run: |
+        cd example
+        terraform init -reconfigure -backend-config="bucket=$BUCKET" -backend-config="key=$TFSTATE_FILE"
+
+    - name: Terraform Validate
+      # id: validate
+      run: |
+        cd example
+        terraform validate -no-color
+
+    - name: Terraform Plan
+      # id: plan
+      run: |
+        cd example
+        terraform plan -no-color
+    - name: Terraform Apply
+      run: |
+        cd example
+        terraform apply -auto-approve
