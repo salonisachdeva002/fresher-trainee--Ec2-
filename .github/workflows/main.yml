@@ -39,26 +39,29 @@ jobs:
           aws-region: us-east-1
 
 # Initialize command in terraform
-      - name: Terraform Init
+      - name: terraform init
         run : |
           cd example
-          Terraform init
+          terraform init -reconfigure -backend-config="bucket=$BUCKET"-backend-config="key=$TFSTATE_FILE"
       # - name: Terraform Init
     #   run : terraform init
+      # - name: terraform validate
+      #   run: |
+      #     cd example
+      #     terraform validate -no-color
 
-# Generates an execution plan for Terraform
-      - name: Terraform Plan
+      - name: terraform plan
         run : |
           cd example
-          Terraform plan
+          terraform plan 
     # - name: Terraform Plan
     #   run: terraform plan
 
 #Generate an execution apply for terraform 
-      - name: Terraform Apply
+      - name: terraform apply
         run : |
           cd example
-          Terraform plan
+          terraform apply -auto-approve
     # - name: Terraform Apply
     #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve
+        #  terraform apply -auto-approve
