@@ -1,0 +1,19 @@
+on:
+
+  workflow_dispatch:
+
+env:
+  BUCKET: backend-demo1
+  TFSTATE_FILE: salonis.tfstate
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
