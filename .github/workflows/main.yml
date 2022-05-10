@@ -6,7 +6,7 @@ jobs:
   terraform:
     name: terraform
     runs-on: ubuntu-latest
-    environment: production
+    # environment: production
 
     defaults:
       run:
@@ -15,13 +15,13 @@ jobs:
     steps:
 # checkout the repositry to the github action runner
     - name: checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
 # install the latest version of terraform CLI and configure the terraform CLI configure file with terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      # with:
-      #   cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      uses: hashicorp/setup-terraform@v2
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
 #checks the format canonical format
 #- name: Terraform Format
@@ -29,33 +29,36 @@ jobs:
 #configure aws_credentials
 
     - name: configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
 
 # if you have/need it     
-        aws-region: ap-south-1
+        aws-region: us-east-1
 
 # Initialize command in terraform
-      run : |
+     - name: Terraform Init
+        run : |
           cd example
           Terraform init
-    # - name: Terraform Init
+      # - name: Terraform Init
     #   run : terraform init
 
 # Generates an execution plan for Terraform
-      run : |
+      - name: Terraform Plan
+        run : |
           cd example
           Terraform plan
     # - name: Terraform Plan
     #   run: terraform plan
 
-#Generate an execution apply for terraform  
-      run : |
+#Generate an execution apply for terraform 
+      - name: Terraform Apply
+        run : |
           cd example
           Terraform plan
     # - name: Terraform Apply
     #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    #   run: terraform apply -auto-approve
+      run: terraform apply -auto-approve
