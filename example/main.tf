@@ -7,7 +7,7 @@ module "ec2-module" {
  source="../"
  ami=var.ami
  instance-type= var.instance-type
- tag-name= var.tag-name
+ name-tag= var.name-tag
 }
 
 
